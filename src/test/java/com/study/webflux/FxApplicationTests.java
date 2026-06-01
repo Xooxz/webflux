@@ -1,10 +1,10 @@
-package com.lucian.study;
+package com.study.webflux;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WebfluxApplicationTests {
+class FxApplicationTests {
 
     @Test
     void contextLoads() {

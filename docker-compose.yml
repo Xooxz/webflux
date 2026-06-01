@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: fx-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: fxdb
+      POSTGRES_USER: fxuser
+      POSTGRES_PASSWORD: fxpass
+
+#  redis:
+#    image: redis:7
+#    container_name: fx-redis
+#    ports:
+#      - "6379:6379"
+#
+#  kafka:
+#    image: apache/kafka:3.8.0
+#    container_name: fx-kafka
+#    ports:
+#      - "9092:9092"

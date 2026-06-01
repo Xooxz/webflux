@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: reactive-fx-stream
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/fxdb
+    username: fxuser
+    password: fxpass
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fx-stream-group
+      auto-offset-reset: earliest
+    producer:
+      retries: 3
