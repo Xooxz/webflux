@@ -1,22 +1,9 @@
-services:
-  postgres:
-    image: postgres:16
-    container_name: fx-postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: fxdb
-      POSTGRES_USER: fxuser
-      POSTGRES_PASSWORD: fxpass
+version: '3.8'
 
-#  redis:
-#    image: redis:7
-#    container_name: fx-redis
-#    ports:
-#      - "6379:6379"
-#
-#  kafka:
-#    image: apache/kafka:3.8.0
-#    container_name: fx-kafka
-#    ports:
-#      - "9092:9092"
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: fx-redis
+    ports:
+      - "16379:6379"
+    command: redis-server --requirepass your_password123! --appendonly yes

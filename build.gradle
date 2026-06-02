@@ -19,25 +19,11 @@ repositories {
 }
 
 dependencies {
-    // WebFlux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-    // Validation
-    // implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Redis Reactive
-    // implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 
     // Kafka
     // implementation 'org.springframework.kafka:spring-kafka'
-
-    // R2DBC
-    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-    runtimeOnly 'org.postgresql:r2dbc-postgresql'
-    runtimeOnly 'org.postgresql:postgresql'
-
-    // Actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
