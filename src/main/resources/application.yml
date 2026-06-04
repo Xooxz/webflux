@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: reactive-fx-stream
+
+  data:
+    redis:
+      host: localhost
+      port: 16379
+      password: your_password123!
+      database: 0
+
+  # kafka:
+  #   bootstrap-servers: localhost:9092
+  #   consumer:
+  #     group-id: fx-stream-group
+  #     auto-offset-reset: earliest
+  #   producer:
+  #     retries: 3

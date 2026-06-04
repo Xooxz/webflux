@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: fx-redis
+    ports:
+      - "16379:6379"
+    command: redis-server --requirepass your_password123! --appendonly yes
