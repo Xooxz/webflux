@@ -1,4 +1,4 @@
-package com.study.webflux.rate;
+package com.study.webflux.rate.dto;
 
 import lombok.Builder;
 
@@ -18,5 +18,4 @@ public record RateResponse(
         BigDecimal price,
         LocalDateTime createdAt
 ) {
-
 }

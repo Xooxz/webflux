@@ -1,5 +1,8 @@
 package com.study.webflux.rate;
 
+import com.study.webflux.rate.client.ExternalRateClient;
+import com.study.webflux.rate.dto.MarketSnapshot;
+import com.study.webflux.rate.dto.RateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RateService {
 
     private final ReactiveStringRedisTemplate redisTemplate;
+    private final ExternalRateClient externalRateClient;
 
     /**
      * 통화쌍에 대한 최신 환율 정보를 조회한다.
@@ -33,6 +37,55 @@ public class RateService {
         return redisTemplate.opsForValue()
                 .get(key)
                 .map(price -> new RateResponse(symbol, new BigDecimal(price), LocalDateTime.now()));
+    }
+
+    /**
+     * 여러 통화의 환율 정보를 동시에 조회한다.
+     * <p>
+     * WebFlux의 Mono.zip()을 사용하여 독립적인 비동기 작업을 병렬로 수행한 후
+     * 하나의 응답 객체로 결합한다.
+     * <p>
+     * 현재는 테스트용 더미 데이터를 생성하지만,
+     * 실제 운영 환경에서는 각 통화별 외부 환율 API 호출 결과를
+     * 병렬로 수집하는 용도로 활용할 수 있다.
+     *
+     * <pre>
+     * USD-KRW 조회
+     * JPY-KRW 조회
+     * EUR-KRW 조회
+     *     ↓
+     * Mono.zip()
+     *     ↓
+     * MarketSnapshot 생성
+     * </pre>
+     *
+     * @return 여러 통화의 환율 정보를 포함한 스냅샷
+     */
+    public Mono<MarketSnapshot> getMarketSnapshot() {
+        Mono<RateResponse> usd = Mono.fromSupplier(() -> createDummyRate("USD-KRW"));
+        Mono<RateResponse> jpy = Mono.fromSupplier(() -> createDummyRate("JPY-KRW"));
+        Mono<RateResponse> eur = Mono.fromSupplier(() -> createDummyRate("EUR-KRW"));
+
+        return Mono.zip(usd, jpy, eur).map(tuple ->
+                MarketSnapshot.builder()
+                        .usd(tuple.getT1())
+                        .jpy(tuple.getT2())
+                        .eur(tuple.getT3())
+                        .build()
+        );
+    }
+
+    /**
+     * 외부 환율 API를 비동기적으로 호출하여 환율 정보를 조회한다.
+     * <p>
+     * WebFlux의 WebClient를 사용하여 non-blocking 방식으로 외부 API를 호출한다.
+     * 외부 API 호출 과정에서 발생할 수 있는 장애에 대비하여
+     * timeout, retry, fallback 정책을 적용하였다.
+     *
+     * @return 외부 API에서 조회한 USD-KRW 환율 정보
+     */
+    public Mono<RateResponse> getExternalRate() {
+        return externalRateClient.getRate("USD", "KRW");
     }
 
     /**

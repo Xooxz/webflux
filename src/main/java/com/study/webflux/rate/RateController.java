@@ -1,5 +1,7 @@
 package com.study.webflux.rate;
 
+import com.study.webflux.rate.dto.MarketSnapshot;
+import com.study.webflux.rate.dto.RateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,36 @@ public class RateController {
     @GetMapping("/{symbol}")
     public Mono<RateResponse> getRate(@PathVariable String symbol) {
         return rateService.getRate(symbol);
+    }
+
+    /**
+     * 여러 통화의 환율 정보를 동시에 조회한다.
+     * <p>
+     * WebFlux의 Mono.zip()을 활용하여
+     * USD, JPY, EUR 환율 정보를 병렬로 조회한 후
+     * 하나의 응답 객체로 반환한다.
+     * <p>
+     * 실제 운영 환경에서는 여러 외부 API를 동시에 호출하여
+     * 응답 시간을 단축하는 용도로 활용할 수 있다.
+     *
+     * @return 시장 환율 스냅샷
+     */
+    @GetMapping("/snapshot")
+    public Mono<MarketSnapshot> getMarketSnapshot() {
+        return rateService.getMarketSnapshot();
+    }
+
+    /**
+     * 외부 환율 API를 통해 USD-KRW 환율을 조회한다.
+     * <p>
+     * WebClient 기반 non-blocking 호출을 사용하며,
+     * timeout, retry, fallback 처리를 포함한다.
+     *
+     * @return 외부 API 환율 정보
+     */
+    @GetMapping("/external")
+    public Mono<RateResponse> getExternalRate() {
+        return rateService.getExternalRate();
     }
 
     /**
